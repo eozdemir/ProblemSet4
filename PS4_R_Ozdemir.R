@@ -193,3 +193,52 @@ plot(NULL, type="l", xlim=c(min(time), max(time)), ylim=c(20,70), xlab= "Time Pe
 lines(time, RedWin, lty=1, col="red")
 lines(time, BlueWin, lty=1, col="blue")
 dev.off()
+
+#####Polarization Plot
+Polar<- scan("NetLogo.csv", skip=9320, nlines=170, what=" ", sep=",") #polarization data 
+Polar<- matrix(Polar, nrow=170, byrow=TRUE) #convert into matrix by row
+str(Polar)
+PolarNames<- Polar[1, ] #store the names seperately
+PolarNames<- unique(PolarNames)
+str(PolarNames) #there is an extra 5th name I don't know why but I will remove it
+PolarNames<- PolarNames[-5]
+PolarNames<- paste(rep(c("Total", "Voters", "Activists"), each=4), "_", PolarNames, sep="")  
+PolarNames
+Polar<- data.frame(Polar[-1, ]) #rest is the dataframe of polarization data
+colnames(Polar)<- PolarNames #give the variable names to columns 
+str(Polar)
+Polar<- Polar[ ,-c(13:length(Polar))] #eliminate the uninformative part
+
+#write out csv file
+write.csv(Polar, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/Polarization.csv") 
+
+#converting factors
+CandPol<- as.numeric(as.character(Polar$Total_y)) #total refers to candidates
+VotersPol<- as.numeric(as.character(Polar$Voters_y))
+ActPol<- as.numeric(as.character(Polar$Activists_y))
+time<- as.numeric(as.character(Polar$Total_x))
+
+#polarization plot
+PolarPlot<- c(CandPol,VotersPol,ActPol)
+PolarPlot<- as.data.frame(matrix(PolarPlot, ncol=1))
+colnames(PolarPlot)<- c("pol")
+PolarPlot$type<- as.factor(c(rep("Candidates", length(CandPol)), rep("Voters", length(VotersPol)), rep("Activists", length(ActPol))))
+PolarPlot$time<- c(rep(time, 3))
+#I will divide time periods into 2 to see a more meaningful graph of change in polarization in time rather than in each period. It is possible to increase the number of time periods.
+PolarPlot$time[PolarPlot$time<80]<- 1
+PolarPlot$time[PolarPlot$time>=80]<- 2
+head(PolarPlot)
+tail(PolarPlot)
+
+#Polarization plot
+pdf("PolarizationPlot.pdf")
+par(mfrow=c(1,1))
+boxplot(PolarPlot$pol~ PolarPlot$type+PolarPlot$time, xlab="Past vs. Recent", ylab="Polarization level", main="Change in Polarization", ylim=c(0,9), col=c(rep("orange",3), rep("purple", 3)))
+legend("topright",
+       legend=c("Past", "Recent"), 
+       lty=c(1,1),
+       pch=22,
+       col=c("orange", "purple"),
+       title=" ")
+dev.off()
+
