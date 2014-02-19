@@ -160,3 +160,36 @@ dotchart(D3.mat,
 dev.off()
 
 #####Winners Plot
+Winners<- scan("NetLogo.csv", skip=9139, nlines=170, what=" ", sep=",") #winners data 
+Winners<- matrix(Winners, nrow=170, byrow=TRUE) #convert into matrix by row
+str(Winners)
+WinNames<- Winners[1, ] #store the names seperately
+WinNames<- unique(WinNames)
+str(WinNames) #there is an extra 5th name I don't know why but I will remove it
+WinNames<- WinNames[-5]
+WinNames<- paste(rep(c("Blue", "Fifty", "Red"), each=4), "_", WinNames, sep="")  
+WinNames
+Winners<- data.frame(Winners[-1, ]) #rest is the dataframe of winners
+colnames(Winners)<- WinNames #give the variable names to columns 
+str(Winners)
+Winners<- Winners[ ,-c(13:length(Winners))] #eliminate the uninformative part
+
+#write out csv file
+write.csv(Winners, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/Winner.csv") 
+
+#Winners percentages
+time<- Winners$Blue_x #time period
+RedWin<- Winners$Red_y #win % of red cands
+BlueWin<- Winners$Blue_y #win % of blue cands
+#converting factors
+time<- as.numeric(as.character(time)) 
+BlueWin<- as.numeric(as.character(BlueWin))
+time<- as.numeric(as.character(time))
+
+#Winners plot
+pdf("Winner.pdf")
+par(mfrow=c(1,1))
+plot(NULL, type="l", xlim=c(min(time), max(time)), ylim=c(20,70), xlab= "Time Period", ylab="Percent", main="What % of Candidates Won")
+lines(time, RedWin, lty=1, col="red")
+lines(time, BlueWin, lty=1, col="blue")
+dev.off()
