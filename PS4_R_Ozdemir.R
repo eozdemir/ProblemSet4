@@ -133,13 +133,14 @@ RedVoter2 <- mean(as.numeric(as.character(D2Data$RedVoters_y)), na.rm=TRUE)
 BlueVoter2<- mean(as.numeric(as.character(D2Data$BlueVoters_y)), na.rm=TRUE)
 RedAct2   <- mean(as.numeric(as.character(D2Data$RedActivists_y)), na.rm=TRUE)
 BlueAct2  <- mean(as.numeric(as.character(D2Data$BlueActivists_y)), na.rm=TRUE)
-plot(NULL, xlim=c(0,4), ylim=c(-13.5,12.1), axes=T, ylab="Positions", xlab="Index", main="Positioning on Dimension 2")
-points(RedCand2, col="red", pch=19)
-points(BlueCand2, col="blue", pch=19)
-points(2, RedVoter2, col="red", pch=23)
-points(2, BlueVoter2, col="blue", pch=23)
-points(3, RedAct2, col="red", pch=22)
-points(3, BlueAct2, col="blue", pch=22)
+D2.mat<- matrix(c(RedCand2, BlueCand2, RedVoter2, BlueVoter2, RedAct2, BlueAct2), byrow=FALSE, nrow=2)
+rownames(D2.mat)<- c("Red", "Blue")
+colnames(D2.mat)<- c("Candidates", "Voters", "Activists")
+dotchart(D2.mat,
+         xlim=c(-13.5,12.1), # The limits for the x-axis
+         xlab="Positions",
+         main="Positioning on D2",
+         pch = 19, color=rep(c("red", "blue"),3)) 
 
 #D3
 RedCand3  <- mean(as.numeric(as.character(D3Data$Red_y)), na.rm=TRUE)
@@ -148,14 +149,14 @@ RedVoter3 <- mean(as.numeric(as.character(D3Data$RedVoters_y)), na.rm=TRUE)
 BlueVoter3<- mean(as.numeric(as.character(D3Data$BlueVoters_y)), na.rm=TRUE)
 RedAct3   <- mean(as.numeric(as.character(D3Data$RedActivists_y)), na.rm=TRUE)
 BlueAct3  <- mean(as.numeric(as.character(D3Data$BlueActivists_y)), na.rm=TRUE)
-plot(NULL, xlim=c(0,4), ylim=c(-8,8), axes=T, ylab="Positions", xlab="Index", main="Positioning on Dimension 3")
-points(RedCand3, col="red", pch=19)
-points(BlueCand3, col="blue", pch=19)
-points(2, RedVoter3, col="red", pch=23)
-points(2, BlueVoter3, col="blue", pch=23)
-points(3, RedAct3, col="red", pch=22)
-points(3, BlueAct3, col="blue", pch=22)
-legend()
+D3.mat<- matrix(c(RedCand3, BlueCand3, RedVoter3, BlueVoter3, RedAct3, BlueAct3), byrow=FALSE, nrow=2)
+rownames(D3.mat)<- c("Red", "Blue")
+colnames(D3.mat)<- c("Candidates", "Voters", "Activists")
+dotchart(D3.mat,
+         xlim=c(-8,8), # The limits for the x-axis
+         xlab="Positions",
+         main="Positioning on D3",
+         pch = 19, color=rep(c("red", "blue"),3)) 
 dev.off()
 
 #####Winners Plot
