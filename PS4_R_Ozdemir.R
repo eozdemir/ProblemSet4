@@ -242,3 +242,35 @@ legend("topright",
        title=" ")
 dev.off()
 
+######Incumbent Plot
+Incumbent<- scan("NetLogo.csv", skip=9499, nlines=170, what=" ", sep=",") #incumbent data 
+Incumbent<- matrix(Incumbent, nrow=170, byrow=TRUE) #convert into matrix by row
+str(Incumbent)
+IncNames<- Incumbent[1, ] #store the names seperately
+IncNames<- unique(IncNames)
+str(IncNames) #there is an extra 5th name I don't know why but I will remove it
+IncNames<- IncNames[-5]  
+IncNames
+Incumbent<- data.frame(Incumbent[-1, ]) #rest is the dataframe of incumbents
+colnames(Incumbent)<- IncNames #give the variable names to columns 
+str(Incumbent)
+Incumbent<- Incumbent[ ,-c(5:length(Incumbent))] #eliminate the uninformative part
+
+#write out csv file
+write.csv(Incumbent, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/IncumbentWins.csv") 
+
+#Incumbent percentages
+time<- Incumbent$x #time period
+IncWin<- Incumbent$y #win % of incumbents
+
+#converting factors
+time<- as.numeric(as.character(time)) 
+IncWin<- as.numeric(as.character(IncWin))
+
+#Incumbent plot
+pdf("IncumbentWins.pdf")
+par(mfrow=c(1,1))
+plot(NULL, type="l", xlim=c(10, max(time)), ylim=c(40,70), xlab= "Time Period", ylab="Percent", main="What % of Incumbents Won")
+lines(time, IncWin, lty=1, col="purple")
+dev.off()
+
