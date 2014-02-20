@@ -274,3 +274,63 @@ plot(NULL, type="l", xlim=c(10, max(time)), ylim=c(40,70), xlab= "Time Period", 
 lines(time, IncWin, lty=1, col="purple")
 dev.off()
 
+
+#####JMR Chapter 4
+###Question 3
+squareCubeFun<- function(n){
+  number<- 1:n #vector of the given number
+  square<- number^2 #vector of the given number's squares
+  cube<- number^3 #vector of the given number's cubes
+  matrix<- cbind(number, square, cube) #put them together
+  #the question asks us to output this table
+  write.table(matrix, file="SquareCubeTable.txt")
+  return(matrix)
+}
+squareCubeFun(7) #lets try 7 as it was given in the example to see it works
+
+###Question 4
+mTableFun<- function(){
+  mtable<- matrix(rep(0, 81), nrow=9) #generate the mtable full of 0s
+  for(i in 1:9){
+    mtable[i, ]<- i*(1:9) #multiply 1:9 with itself by this for loop
+  }
+  show(mtable) #code recommended in the question
+  #the question asks us to output this table
+  write.table(mtable, file="MultiplicationTable.txt") 
+}
+mTableFun() #see it works
+
+#####JMR Chapter 7
+###Question 3
+install.packages("lattice")
+library(lattice)
+#population generated
+pop <- data.frame(m = rnorm(100, 160, 20), f = rnorm(100, 160, 20))
+#function for creating next generation
+next.gen <- function(pop) {
+  pop$m <- sample(pop$m)
+  pop$m <- apply(pop, 1, mean)
+  pop$f <- pop$m
+  return(pop)
+}
+
+#generate 9 generations data
+maleHeightData<- NULL
+for(i in 1:9){
+  maleHeight<- data.frame(next.gen(pop)[,1], rep(i,100)) #draws a sample every time in the loop and assigns a generation to it
+  maleHeightData<- rbind(maleHeightData, maleHeight) #collects all 9 generations in a dataframe
+}
+colnames(maleHeightData)<- c("height", "generation") #for height and generation
+#histogram as in the chapter
+histogram(~ height | generation, data=maleHeightData, xlab="male height", main="Distribuion of Male Height over Generations")
+data(ufc)
+histogram(~ dbh.cm | species, data = ufc)
+
+###Question 4
+install.packages("spuRs")
+library(spuRs)
+data(treeg)
+head(treeg)
+xyplot(height.ft~age|tree.ID, data=treeg, type="l", xlab="age(years)", ylab="height(feet)")
+
+##ps: The lattice library doesn't seem to work on my computer, gives error. So I just wrote the code for last 2 plots from what I found from the JMR examples but I don't know if they work/not.
