@@ -344,8 +344,6 @@ for(i in 1:9){
 colnames(maleHeightData)<- c("height", "generation") #for height and generation
 #histogram as in the chapter
 histogram(~ height | generation, data=maleHeightData, xlab="male height", main="Distribuion of Male Height over Generations")
-data(ufc)
-histogram(~ dbh.cm | species, data = ufc)
 
 ###Question 4
 install.packages("spuRs")
