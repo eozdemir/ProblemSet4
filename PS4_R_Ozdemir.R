@@ -2,6 +2,26 @@ rm(list=ls())
 setwd("/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4")
 
 ## Section A
+#First, I need to create the directories where I will write out the csv files and pdf plots.
+TopDirectory <- scan("NetLogo.csv", skip=1, nlines=2, what=" ", sep="\n") #read the two rows of file information at the beginning of NetLogo file 
+#Clean the name/date information before creating the top level directory
+#Get rid of the commas after info
+TopDirectory<- gsub(",","", TopDirectory)
+#Get rid of the slashes in date
+TopDirectory<- gsub("/", "-", TopDirectory)
+#Get rid of the colons in time
+TopDirectory<- gsub(":", ".", TopDirectory)
+#Merge all info in the same vector
+TopDirectory<- paste(TopDirectory, collapse="_")
+
+#Create the top level directory
+dir.create(file.path(TopDirectory))
+
+#Create the sub-directories of Globals, Turtles, Plots
+sapply(X=c("Globals", "Turtles", "Plots"), FUN=function(X){dir.create(file.path(TopDirectory,X))})
+
+#Create the sub-directories under Plots
+sapply(X=c("PositionPlot", "WinnersPlot", "PolarizationPlot", "IncumbentPercentagePlot"), FUN=function(X){dir.create(file.path(TopDirectory, "Plots", X))})
 
 ####Globals
 Globals <- scan("NetLogo.csv", skip=8, nlines=2, what=" ", sep="\n") #read the two rows of global 
@@ -21,7 +41,7 @@ for (i in 1:length(GlobNames)) {
 head(Globs) #see the first few items of Globs
 Globs[[84]] #check one of the indices to make sure how to access
 #write out R file
-dump(Globs, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/Globals.R")
+dump("Globs", file=file.path(TopDirectory, "Globals", "Globals.R"))
 
 ####Turtles
 Turtles<- scan("NetLogo.csv", skip=12, nlines=4787, what=" ", sep=",") #scan the turtles data into 
@@ -48,12 +68,13 @@ table(TurtParties$breed) #check if only parties
 #Candidates
 TurtCands<- TurtData[TurtData$breed=="{breed cands}", ] #a subset of only breed candidates
 table(TurtCands$breed) #check if only candidates
+
 #write out csv files
-write.csv(TurtDistricts, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/Districts.csv")
-write.csv(TurtVoters, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/Voters.csv")
-write.csv(TurtActivists, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/Activists.csv")
-write.csv(TurtParties, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/Parties.csv")
-write.csv(TurtCands, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/Candidates.csv")
+write.csv(TurtDistricts, file=file.path(TopDirectory, "Turtles" ,"Districts.csv"))
+write.csv(TurtVoters, file=file.path(TopDirectory, "Turtles" ,"Voters.csv"))
+write.csv(TurtActivists, file=file.path(TopDirectory, "Turtles" ,"Activists.csv"))
+write.csv(TurtParties, file=file.path(TopDirectory, "Turtles" ,"Parties.csv"))
+write.csv(TurtCands, file=file.path(TopDirectory, "Turtles" ,"Candidates.csv"))
 
 ####Plots
 ####Position Plot
@@ -103,12 +124,12 @@ str(D3Data)
 D3Data<- D3Data[ ,-c(25:84)] #eliminate the uninformative part
 
 #write out csv files
-write.csv(D1Data, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/D1.csv") 
-write.csv(D2Data, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/D2.csv") 
-write.csv(D3Data, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/D3.csv") 
+write.csv(D1Data, file=file.path(TopDirectory, "Plots","PositionPlot" ,"D1.csv")) 
+write.csv(D2Data, file=file.path(TopDirectory, "Plots","PositionPlot" ,"D2.csv")) 
+write.csv(D3Data, file=file.path(TopDirectory, "Plots","PositionPlot" ,"D3.csv")) 
 
 #Plot of average positions for each dimension
-pdf("Positions.pdf")
+pdf(file.path(TopDirectory,"Plots","PositionPlot","Positions.pdf"))
 par(mfrow=c(1,3))
 #D1 averages
 RedCand1  <- mean(as.numeric(as.character(D1Data$Red_y)), na.rm=TRUE)
@@ -175,7 +196,7 @@ str(Winners)
 Winners<- Winners[ ,-c(13:length(Winners))] #eliminate the uninformative part
 
 #write out csv file
-write.csv(Winners, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/Winner.csv") 
+write.csv(Winners, file=file.path(TopDirectory,"Plots","WinnersPlot","Winner.csv")) 
 
 #Winners percentages
 time<- Winners$Blue_x #time period
@@ -187,7 +208,7 @@ BlueWin<- as.numeric(as.character(BlueWin))
 time<- as.numeric(as.character(time))
 
 #Winners plot
-pdf("Winner.pdf")
+pdf(file.path(TopDirectory,"Plots","WinnersPlot","Winner.pdf"))
 par(mfrow=c(1,1))
 plot(NULL, type="l", xlim=c(min(time), max(time)), ylim=c(20,70), xlab= "Time Period", ylab="Percent", main="What % of Candidates Won")
 lines(time, RedWin, lty=1, col="red")
@@ -210,7 +231,7 @@ str(Polar)
 Polar<- Polar[ ,-c(13:length(Polar))] #eliminate the uninformative part
 
 #write out csv file
-write.csv(Polar, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/Polarization.csv") 
+write.csv(Polar, file=file.path(TopDirectory, "Plots","PolarizationPlot" ,"Polarization.csv")) 
 
 #converting factors
 CandPol<- as.numeric(as.character(Polar$Total_y)) #total refers to candidates
@@ -231,7 +252,7 @@ head(PolarPlot)
 tail(PolarPlot)
 
 #Polarization plot
-pdf("PolarizationPlot.pdf")
+pdf(file.path(TopDirectory,"Plots","PolarizationPlot","PolarizationPlot.pdf"))
 par(mfrow=c(1,1))
 boxplot(PolarPlot$pol~ PolarPlot$type+PolarPlot$time, xlab="Past vs. Recent", ylab="Polarization level", main="Change in Polarization", ylim=c(0,9), col=c(rep("orange",3), rep("purple", 3)))
 legend("topright",
@@ -257,7 +278,7 @@ str(Incumbent)
 Incumbent<- Incumbent[ ,-c(5:length(Incumbent))] #eliminate the uninformative part
 
 #write out csv file
-write.csv(Incumbent, file="/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4/IncumbentWins.csv") 
+write.csv(Incumbent, file=file.path(TopDirectory, "Plots","IncumbentPercentagePlot" ,"IncumbentsWin.csv")) 
 
 #Incumbent percentages
 time<- Incumbent$x #time period
@@ -268,7 +289,7 @@ time<- as.numeric(as.character(time))
 IncWin<- as.numeric(as.character(IncWin))
 
 #Incumbent plot
-pdf("IncumbentWins.pdf")
+pdf(file.path(TopDirectory, "Plots","IncumbentPercentagePlot","IncumbentWins.pdf"))
 par(mfrow=c(1,1))
 plot(NULL, type="l", xlim=c(10, max(time)), ylim=c(40,70), xlab= "Time Period", ylab="Percent", main="What % of Incumbents Won")
 lines(time, IncWin, lty=1, col="purple")
