@@ -1,9 +1,12 @@
 rm(list=ls())
 setwd("/Users/elifozdemir/Desktop/WashU 1.2/R Programming/Problem Sets/ProblemSet4")
 
-## Section A
+##### Section A
+
+#Create the function that will include all below by taking the filename argument only and make all directories
+directoryFun<- function(filename){
 #First, I need to create the directories where I will write out the csv files and pdf plots.
-TopDirectory <- scan("NetLogo.csv", skip=1, nlines=2, what=" ", sep="\n") #read the two rows of file information at the beginning of NetLogo file 
+TopDirectory <- scan(file=filename, skip=1, nlines=2, what=" ", sep="\n") #read the two rows of file information at the beginning of NetLogo file 
 #Clean the name/date information before creating the top level directory
 #Get rid of the commas after info
 TopDirectory<- gsub(",","", TopDirectory)
@@ -24,7 +27,7 @@ sapply(X=c("Globals", "Turtles", "Plots"), FUN=function(X){dir.create(file.path(
 sapply(X=c("PositionPlot", "WinnersPlot", "PolarizationPlot", "IncumbentPercentagePlot"), FUN=function(X){dir.create(file.path(TopDirectory, "Plots", X))})
 
 ####Globals
-Globals <- scan("NetLogo.csv", skip=8, nlines=2, what=" ", sep="\n") #read the two rows of global 
+Globals <- scan(file=filename, skip=8, nlines=2, what=" ", sep="\n") #read the two rows of global 
 GlobNames <- strsplit(Globals[1], split=",") #store the first row as Global names and split the cells
 GlobNames <- as.list(GlobNames[[1]]) #reach the items in first row and make a list from
 length(GlobNames) #see the length of list to check if its the same with number of cells in csv file (84)
@@ -44,7 +47,7 @@ Globs[[84]] #check one of the indices to make sure how to access
 dump("Globs", file=file.path(TopDirectory, "Globals", "Globals.R"))
 
 ####Turtles
-Turtles<- scan("NetLogo.csv", skip=12, nlines=4787, what=" ", sep=",") #scan the turtles data into 
+Turtles<- scan(file=filename, skip=12, nlines=4787, what=" ", sep=",") #scan the turtles data into 
 Turts<- matrix(Turtles, nrow=4787, byrow=TRUE) #convert into matrix by row
 str(Turts)
 TurtNames<- Turts[1, ] #store the names seperately
@@ -79,7 +82,7 @@ write.csv(TurtCands, file=file.path(TopDirectory, "Turtles" ,"Candidates.csv"))
 ####Plots
 ####Position Plot
 #D1
-PlotD1<- scan("NetLogo.csv", skip=8545, nlines=170, what=" ", sep=",") #scan D1 data 
+PlotD1<- scan(file=filename, skip=8545, nlines=170, what=" ", sep=",") #scan D1 data 
 PlotD1<- matrix(PlotD1, nrow=170, byrow=TRUE) #convert into matrix by row
 str(PlotD1)
 D1Names<- PlotD1[1, ] #store the names seperately
@@ -94,7 +97,7 @@ str(D1Data)  #gives us 84 variables instead of 24
 D1Data<- D1Data[ ,-c(25:84)] #eliminate the uninformative part
 
 #D2
-PlotD2<- scan("NetLogo.csv", skip=8729, nlines=170, what=" ", sep=",") #scan D2 data 
+PlotD2<- scan(file=filename, skip=8729, nlines=170, what=" ", sep=",") #scan D2 data 
 PlotD2<- matrix(PlotD2, nrow=170, byrow=TRUE) #convert into matrix by row
 str(PlotD2)
 D2Names<- PlotD2[1, ] #store the names seperately
@@ -109,7 +112,7 @@ str(D2Data)
 D2Data<- D2Data[ ,-c(25:84)] #eliminate the uninformative part
 
 #D3
-PlotD3<- scan("NetLogo.csv", skip=8913, nlines=170, what=" ", sep=",") #scan D3 data 
+PlotD3<- scan(file=filename, skip=8913, nlines=170, what=" ", sep=",") #scan D3 data 
 PlotD3<- matrix(PlotD3, nrow=170, byrow=TRUE) #convert into matrix by row
 str(PlotD3)
 D3Names<- PlotD3[1, ] #store the names seperately
@@ -181,7 +184,7 @@ dotchart(D3.mat,
 dev.off()
 
 #####Winners Plot
-Winners<- scan("NetLogo.csv", skip=9139, nlines=170, what=" ", sep=",") #winners data 
+Winners<- scan(file=filename, skip=9139, nlines=170, what=" ", sep=",") #winners data 
 Winners<- matrix(Winners, nrow=170, byrow=TRUE) #convert into matrix by row
 str(Winners)
 WinNames<- Winners[1, ] #store the names seperately
@@ -216,7 +219,7 @@ lines(time, BlueWin, lty=1, col="blue")
 dev.off()
 
 #####Polarization Plot
-Polar<- scan("NetLogo.csv", skip=9320, nlines=170, what=" ", sep=",") #polarization data 
+Polar<- scan(file=filename, skip=9320, nlines=170, what=" ", sep=",") #polarization data 
 Polar<- matrix(Polar, nrow=170, byrow=TRUE) #convert into matrix by row
 str(Polar)
 PolarNames<- Polar[1, ] #store the names seperately
@@ -264,7 +267,7 @@ legend("topright",
 dev.off()
 
 ######Incumbent Plot
-Incumbent<- scan("NetLogo.csv", skip=9499, nlines=170, what=" ", sep=",") #incumbent data 
+Incumbent<- scan(file=filename, skip=9499, nlines=170, what=" ", sep=",") #incumbent data 
 Incumbent<- matrix(Incumbent, nrow=170, byrow=TRUE) #convert into matrix by row
 str(Incumbent)
 IncNames<- Incumbent[1, ] #store the names seperately
@@ -294,7 +297,13 @@ par(mfrow=c(1,1))
 plot(NULL, type="l", xlim=c(10, max(time)), ylim=c(40,70), xlab= "Time Period", ylab="Percent", main="What % of Incumbents Won")
 lines(time, IncWin, lty=1, col="purple")
 dev.off()
+}  #####end of the directoryFun
 
+###Run the function for NetLogo file
+directoryFun(filename="NetLogo.csv")  
+
+
+######Section B
 
 #####JMR Chapter 4
 ###Question 3
